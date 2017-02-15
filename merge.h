@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define MAX_PATH_LENGTH 1024
+#define MAX_CHARS_PER_LINE 1024
 
 //return values of all functions
 #define SUCCESS 0

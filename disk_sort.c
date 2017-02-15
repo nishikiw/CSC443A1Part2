@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/timeb.h>
-#include "a1.h"
+#include "merge.h"
 
 /**
 * Compares two records a and b 
@@ -15,8 +15,8 @@
 int compare (const void *a, const void *b) {
 	Record one = *(Record*)a;
 	Record two = *(Record*)b;
-	int a_f = one.uid2;
-	int b_f = two.uid2;
+	int a_f = one.UID2;
+	int b_f = two.UID2;
 	return (a_f - b_f);
 }
 
@@ -37,7 +37,7 @@ void sort(Record * buffer, int total_records){
 // Print all the records in order in the buffer.
 void print_records(Record * buffer, int total_records){
 	for (int i = 0; i < total_records; i++){
-		printf("uid2 = %d, uid1 = %d\n", buffer[i].uid2, buffer[i].uid1);
+		printf("uid2 = %d, uid1 = %d\n", buffer[i].UID2, buffer[i].UID1);
 	}
 }
 
