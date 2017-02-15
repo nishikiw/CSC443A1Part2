@@ -69,12 +69,12 @@ int main(int argc, char **argv){
 	
 	if (fread(buffer, sizeof(Record), num_records, fp_read) > 0){
 		//printf("Original records:\n");
-		//print_records(buffer, total_records);
+		//print_records(buffer, num_records);
 		
-		sort(buffer, total_records);
+		sort(buffer, num_records);
 		
 		//printf("Records sorted by uid2:\n");
-		//print_records(buffer, total_records);
+		//print_records(buffer, num_records);
 	}
 	else{
 		printf ("Could not read file \"%s\".\n", file_name);
