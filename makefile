@@ -16,15 +16,15 @@ MAIN_SRC=main.c
 READ_RAM_SEQ_SRC=read_ram_seq.c
  
 # Binaries
-all: write_blocks_seq read_ram_seq main
+all: write_blocks_seq read_ram_seq disk_sort
  
 #sequential writing in blocks
 write_blocks_seq: $(WRITE_BLOCKS_SRC)
 	$(CC) $(CFLAGS) $^ -o $@ 
 read_ram_seq: $(READ_RAM_SEQ_SRC)
 	$(CC) $(CFLAGS) $^ -o $@ 
-main: $(DISK_SORT_SRC) $(SORTED_RUN_SRC) $(MERGE_EXTERNAL_SRC) $(MAIN_SRC)
+disk_sort: $(DISK_SORT_SRC) $(SORTED_RUN_SRC) $(MERGE_EXTERNAL_SRC) $(MAIN_SRC)
 	$(CC) $(CFLAGS) $^ -o $@
 
 clean:  
-	rm write_blocks_seq main sorted_list*.dat records_sorted.dat read_ram_seq
+	rm write_blocks_seq disk_sort sorted_list*.dat records_sorted.dat read_ram_seq

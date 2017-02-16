@@ -1,4 +1,4 @@
-mport os
+import os
 import sys
 import subprocess
 
@@ -15,11 +15,11 @@ sizes = [
 
 mem_size = 200*MB
 
-filename = sys.argv[1]
-block_size = sys.argv[3]
+filename = "records.dat"
+block_size = 10240
 
 
-f1 = open("performance_disk_sort"+str(iteration)+".txt", "w")
+f1 = open("performance_disk_sort.txt", "w")
 
 for size in sizes:
     subprocess.run(["/usr/bin/time -v disk_sort", filename, str(mem_size*size), str(block_size)], stdout=f1)
