@@ -74,7 +74,7 @@ int main(int argc, char **argv){
 		sort(buffer, total_records);
 		
 		//printf("Records sorted by uid2:\n");
-		//print_records(buffer, total_records);
+		print_records(buffer, total_records);
 	}
 	else{
 		printf ("Could not read file \"%s\".\n", file_name);
