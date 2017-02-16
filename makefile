@@ -10,16 +10,19 @@ CFLAGS += -std=c99
 # Source files
 WRITE_BLOCKS_SRC=write_blocks_seq.c
 DISK_SORT_SRC=disk_sort.c
+SORTED_RUN_SRC=sorted_run.c
  
 # Binaries
-all: write_blocks_seq disk_sort
+all: write_blocks_seq disk_sort sorted_run
  
 #sequential writing in blocks
 write_blocks_seq: $(WRITE_BLOCKS_SRC)
 	$(CC) $(CFLAGS) $^ -o $@ 
 disk_sort: $(DISK_SORT_SRC)
-	$(CC) $(CFLAGS) $^ -o $@ 
+	$(CC) $(CFLAGS) $^ -o $@
+sorted_run: $(SORTED_RUN_SRC)
+	$(CC) $(CFLAGS) $^ -o $@
  
 
 clean:  
-	rm write_blocks_seq disk_sort
+	rm write_blocks_seq disk_sort sorted_run
