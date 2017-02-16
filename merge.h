@@ -73,4 +73,5 @@ void clean_up (MergeManager * merger);
 int compare_heap_elements (HeapElement *a, HeapElement *b);
 
 
+
 #endif
