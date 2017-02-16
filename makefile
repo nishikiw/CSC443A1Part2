@@ -11,18 +11,17 @@ CFLAGS += -std=c99
 WRITE_BLOCKS_SRC=write_blocks_seq.c
 DISK_SORT_SRC=disk_sort.c
 SORTED_RUN_SRC=sorted_run.c
+MERGE_EXTERNAL_SRC=merge_external.c
+MAIN_SRC=main.c
  
 # Binaries
-all: write_blocks_seq disk_sort sorted_run
+all: write_blocks_seq main
  
 #sequential writing in blocks
 write_blocks_seq: $(WRITE_BLOCKS_SRC)
 	$(CC) $(CFLAGS) $^ -o $@ 
-disk_sort: $(DISK_SORT_SRC)
+main: $(DISK_SORT_SRC) $(SORTED_RUN_SRC) $(MERGE_EXTERNAL_SRC) $(MAIN_SRC)
 	$(CC) $(CFLAGS) $^ -o $@
-sorted_run: $(SORTED_RUN_SRC)
-	$(CC) $(CFLAGS) $^ -o $@
- 
 
 clean:  
-	rm write_blocks_seq disk_sort sorted_run
+	rm write_blocks_seq main
