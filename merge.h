@@ -37,6 +37,7 @@ typedef struct merge_manager {
 	Record **input_buffers; //array of buffers to buffer part of runs
 	int input_buffer_capacity; //how many elements max can each input buffer hold
 	int *current_input_file_positions; //current position in each sorted run, can use -1 if the run is complete
+	int *file_capacity;	// How many elements in total for each file.
 	int *current_input_buffer_positions; //position in current input buffer
 	int *total_input_buffer_elements;  //number of actual elements currently in input buffer - can be less than max capacity
 	int current_heap_size;
@@ -49,7 +50,7 @@ typedef struct merge_manager {
 int merge_runs (MergeManager * manager); 
 
 //2. creates and fills initial buffers, initializes heap taking 1 top element from each buffer 
-int init_merge (MergeManager * manager); 
+int init_merge (MergeManager * manager, int num_trunks, char *input_prefix, int buffer_capacity); 
 
 //3. flushes output buffer to disk when full
 int flush_output_buffer (MergeManager * manager); 
