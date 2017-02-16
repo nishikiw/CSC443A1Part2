@@ -5,9 +5,10 @@ int merge_runs (MergeManager * merger, int num_trunks, char *input_prefix, int b
 	int  result; //stores SUCCESS/FAILURE returned at the end	
 	
 	//1. go in the loop through all input files and fill-in initial buffers
-	if (init_merge (merger, num_trunks, input_prefix, buffer_capacity)!=SUCCESS)
+	if (init_merge (merger, num_trunks, input_prefix, buffer_capacity)!=SUCCESS){
+		printf("INIT_MERGE FAILED\n");
 		return FAILURE;
-
+	}
 	while (merger->current_heap_size > 0) { //heap is not empty
 		HeapElement smallest;
 		Record next; //here next comes from input buffer
@@ -23,7 +24,7 @@ int merge_runs (MergeManager * merger, int num_trunks, char *input_prefix, int b
 		if(result==SUCCESS) {//next element exists, may also return EMPTY
 			if(insert_into_heap (merger, smallest.run_id, &next)!=SUCCESS)
 				return FAILURE;
-		}		
+		}
 
 
 		merger->output_buffer [merger->current_output_buffer_position].UID1=smallest.UID1;
@@ -38,7 +39,6 @@ int merge_runs (MergeManager * merger, int num_trunks, char *input_prefix, int b
 				merger->current_output_buffer_position=0;
 			}	
 		}
-	
 	}
 
 	
@@ -50,6 +50,37 @@ int merge_runs (MergeManager * merger, int num_trunks, char *input_prefix, int b
 	
 	clean_up(merger);
 	return SUCCESS;	
+}
+
+
+void print_heap(MergeManager * manager){
+	printf("heap: ");
+	for (int i = 0; i < manager->current_heap_size; i++){
+		printf("[%d](%d, %d) ", manager->heap[i].run_id, manager->heap[i].UID1, manager->heap[i].UID2);
+	}
+	printf("\n");
+}
+
+
+void print_buffers(MergeManager * manager){
+	for (int i = 0; i < manager->heap_capacity; i++){
+		printf("input %d: ", i);
+		for (int j = 0; j < manager->total_input_buffer_elements[i]; j++){
+			if (j == manager->current_input_buffer_positions[i]){
+				printf("->");
+			}
+			printf("(%d, %d) ", manager->input_buffers[i][j].UID1, manager->input_buffers[i][j].UID2);
+		}
+		printf("\n");
+	}
+	printf("output: ");
+	for (int i = 0; i < manager->output_buffer_capacity; i++){
+		if (i == manager->current_output_buffer_position){
+			printf("->");
+		}
+		printf("(%d, %d) ", manager->output_buffer[i].UID1, manager->output_buffer[i].UID2);
+	}
+	printf("\n------------------------------\n");
 }
 
 
@@ -91,7 +122,7 @@ int insert_into_heap (MergeManager * merger, int run_id, Record *input){
 
 	HeapElement new_heap_element;
 	int child, parent;
-
+	
 	new_heap_element.UID1 = input->UID1;
 	new_heap_element.UID2 = input->UID2;
 	new_heap_element.run_id = run_id;
@@ -112,7 +143,9 @@ int insert_into_heap (MergeManager * merger, int run_id, Record *input){
 		else 
 			break;
 	}
-	merger->heap[child]= new_heap_element;	
+	
+	merger->heap[child]= new_heap_element;
+
 	return SUCCESS;
 }
 
@@ -122,6 +155,12 @@ int insert_into_heap (MergeManager * merger, int run_id, Record *input){
 */
 
 int init_merge (MergeManager * manager, int num_trunks, char *input_prefix, int buffer_capacity) {
+	
+	strcpy(manager->input_prefix, "sorted_list");
+	manager->input_buffer_capacity = buffer_capacity;
+	manager->output_buffer_capacity = buffer_capacity;
+	manager->heap_capacity = num_trunks;
+	manager->current_heap_size = 0;
 	
 	manager->heap = (HeapElement *) calloc (num_trunks, sizeof (HeapElement));
 	
@@ -134,37 +173,50 @@ int init_merge (MergeManager * manager, int num_trunks, char *input_prefix, int 
 	
 	manager->current_output_buffer_position = 0;
 	
-	manager->output_buffer_capacity = buffer_capacity;
-	
 	manager->input_buffers = (Record **) calloc (num_trunks, sizeof (Record *));
 	for (int i = 0; i < num_trunks; i++) { 
 		manager->input_buffers[i] = (Record *) calloc (buffer_capacity, sizeof (Record));
 	}
-	
-	manager->input_buffer_capacity = buffer_capacity;
 	
 	manager->current_input_file_positions = (int *) calloc (num_trunks, sizeof (int));
 	for (int i = 0; i < num_trunks; i++){
 		manager->current_input_file_positions[i] = 0;
 	}
 	
+	manager->current_input_buffer_positions = (int *) calloc (num_trunks, sizeof (int));
+	for (int i = 0; i < num_trunks; i++){
+		manager->current_input_buffer_positions[i] = 0;
+	}
+	
 	manager->file_capacity = (int *) calloc (num_trunks, sizeof (int));
 	for (int i = 0; i < num_trunks; i++){
 		manager->file_capacity[i] = get_number_records_in_file(manager, i);
 	}
-
-	// Fill buffer
+	
+	manager->total_input_buffer_elements = calloc (num_trunks, sizeof (int));
 	for (int i = 0; i < num_trunks; i++){
-		refill_buffer(manager, i);
+		manager->total_input_buffer_elements[i] = 0;
 	}
 	
-	manager->current_heap_size = 0;
-	
-	manager->heap_capacity = num_trunks;
+	// Fill buffer and insert_into_heap
+	for (int i = 0; i < num_trunks; i++){
+		refill_buffer(manager, i);
+		
+		Record next; //here next comes from input buffer
+
+		int result = get_next_input_element (manager, i, &next);
+		
+		if (result==FAILURE){
+			printf("GET_NEXT_INPUT_ELEMENT FAILURE: Fail to get record from run %d\n", i);
+			return FAILURE;
+		}
+		if(result==SUCCESS) {//next element exists, may also return EMPTY
+			if(insert_into_heap (manager, i, &next)!=SUCCESS)
+				return FAILURE;
+		}
+	}
 	
 	strcpy(manager->output_file_name, "records_sorted.dat");
-	
-	strcpy(manager->input_prefix, "sorted_list");
 	
 	return SUCCESS;
 }
@@ -176,7 +228,7 @@ int get_number_records_in_file(MergeManager * manager, int file_number){
 	FILE *fp_read;
 	fp_read = fopen(filename, "r");
 	if (!fp_read){
-		printf ("Could not open file \"%s\" for writing \n", filename);
+		printf ("GET_NUMBER_RECORDS_IN_FILE ERROR: Could not open file \"%s\" for reading \n", filename);
 		return FAILURE;
 	}
 	
@@ -201,7 +253,7 @@ void get_file_name(char* input_file_name, MergeManager * manager, int file_numbe
 }
 
 int flush_output_buffer (MergeManager * manager) {
-	manager->outputFP = fopen ( manager->output_file_name , "wb" );
+	manager->outputFP = fopen ( manager->output_file_name , "a" );
 	if (!manager->outputFP){
 		printf ("Could not open file \"%s\" for writing \n", manager->output_file_name);
 		return FAILURE;
@@ -215,11 +267,15 @@ int flush_output_buffer (MergeManager * manager) {
 
 int get_next_input_element(MergeManager * manager, int file_number, Record *result) {
 	
-	// Input buffer is empty, needs to refill.
-	if (manager->current_input_buffer_positions[file_number] == manager->input_buffer_capacity){
-		int result = refill_buffer(manager, file_number);
-		if (result != SUCCESS){
-			return result;
+	if (manager->current_input_buffer_positions[file_number] == manager->total_input_buffer_elements[file_number]){
+		if (manager->total_input_buffer_elements[file_number] < manager->input_buffer_capacity){
+			return EMPTY;
+		}
+		else{	//REFILL
+			int function_result = refill_buffer(manager, file_number);
+			if (function_result != SUCCESS){
+				return function_result;
+			}
 		}
 	}
 	
@@ -240,10 +296,11 @@ int refill_buffer (MergeManager * manager, int file_number) {
 	
 	manager->inputFP = fopen(input_file_name, "r");
 	if (!manager->inputFP){
-		printf ("Could not open file \"%s\" for writing \n", input_file_name);
+		printf ("REFILL_BUFFER ERROR: Could not open file \"%s\" for reading \n", input_file_name);
 		return FAILURE;
 	}
-
+	
+	fseek(manager->inputFP, sizeof(Record) * manager->current_input_file_positions[file_number], SEEK_SET);
 	int records_left = manager->file_capacity[file_number] - manager->current_input_file_positions[file_number];
 
 	int records_to_read;
@@ -255,10 +312,10 @@ int refill_buffer (MergeManager * manager, int file_number) {
 		records_to_read = records_left;
 		manager->current_input_file_positions[file_number] = -1;
 	}
-	
 	int read_result = fread(manager->input_buffers[file_number], sizeof(Record), records_to_read, manager->inputFP);
 	if (read_result <= 0){
-		printf ("Could not read file \"%s\".\n", input_file_name);
+		printf ("REFILL_BUFFER ERROR: Could not read file \"%s\".\n", input_file_name);
+		printf("Records to read = %d, records left = %d, input_buffer_capacity = %d\n", records_to_read, records_left, manager->input_buffer_capacity);
 		return FAILURE;
 	}
 	
@@ -287,7 +344,15 @@ int compare_heap_elements (HeapElement *a, HeapElement *b) {
 		return 1;
 	}
 	else if (a->UID2 == b->UID2){
-		return 0;
+		if (a->UID1 > b->UID1){
+			return 1;
+		}
+		else if (a->UID1 == b->UID1){
+			return 0;
+		}
+		else{
+			return -1;
+		}
 	}
 	else{
 		return -1;

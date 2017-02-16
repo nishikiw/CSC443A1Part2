@@ -51,10 +51,14 @@ int compare (const void *a, const void *b);
 void sort(Record * buffer, int total_records);
 void print_records(Record * buffer, int total_records);
 
-//SORTED_RUN
+// SORTED_RUN
 int phase1(char* input_file, int mem_size, int block_size, char* output_filename);
+
+// HELPER
 int get_number_records_in_file(MergeManager * manager, int file_number);
 void get_file_name(char* input_file_name, MergeManager * manager, int file_number);
+void print_buffers(MergeManager * manager);
+void print_heap(MergeManager * manager);
 
 //1. main loop
 int merge_runs (MergeManager * manager, int num_trunks, char *input_prefix, int buffer_capacity); 

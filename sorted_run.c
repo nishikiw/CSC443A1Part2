@@ -33,17 +33,18 @@ int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
 	FILE *fp_read, *fp_write;
 	int total_records;
     int left_records;
-    int main_available;
     int num_records_chunk;
 
     if(block_size > mem_size){
     	exit(0);
     }
-    // how many memory Main memory can hold (exclude memory for qsort)
-    main_available = mem_size / 2;
 
     // the number of records in one buffer read
-    int num_of_blocks =  main_available / block_size;
+    int num_of_blocks =  mem_size / block_size / 2;
+	if (num_of_blocks < 1){
+		printf("Memory size is too small.\n");
+		exit(1);
+	}
     num_records_chunk = num_of_blocks * block_size / sizeof(Record);
     
 
@@ -65,7 +66,7 @@ int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
     
     left_records = total_records;
     int load_records;
-    int chunck_num = 1;
+    int chunck_num = 0;
     while(left_records > 0){
         // read records into main memory and sort them
         load_records=fread(buffer, sizeof(Record), num_records_chunk, fp_read);
@@ -85,18 +86,20 @@ int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
 			strcat(string, ".dat");
     	    
     	    if (!(fp_write = fopen ( string , "wb" ))) {  
-    	    	printf ("Could not open file \"sorted_list\" for reading \n");
+    	    	printf ("Could not open file \"sorted_list\" for writing \n");
     	    	exit(0);
     	    }
     	    fwrite (buffer, sizeof(Record), load_records, fp_write);
     	    fclose(fp_write);
+			
+			//decrement on the left_records
+			left_records -= load_records;
+			chunck_num ++;
 		}
-	
-		printf("next_round: \n\n\n");
-
-		//decrement on the left_records
-		left_records -= load_records;
-		chunck_num ++;
+		else{
+			printf ("Could not read file \"%s\".\n", input_file);
+			exit(1);
+		}
 	}
 
 	free(buffer);
