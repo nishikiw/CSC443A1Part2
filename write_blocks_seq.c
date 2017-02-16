@@ -3,15 +3,15 @@
 #include <string.h>
 #include <sys/timeb.h>
 
-#include "a1.h"
+#include "merge.h"
 
 
 Record parseToRecord(char* str) {
 
     Record r;
     
-    r.uid1 = atoi(strtok(str, ","));
-    r.uid2 = atoi(strtok(NULL, ","));
+    r.UID1 = atoi(strtok(str, ","));
+    r.UID2 = atoi(strtok(NULL, ","));
 
     return r; 
 }
