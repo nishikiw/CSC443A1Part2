@@ -41,7 +41,7 @@ void print_records(Record * buffer, int total_records){
 	}
 }
 
-
+/*
 int main(int argc, char **argv){
 	
 	FILE *fp_read;
@@ -50,15 +50,15 @@ int main(int argc, char **argv){
 	int buffer_size = atoi(argv[2]);	// Get the buffer size. Note that block size is 4KB.
 	
 	int num_records = buffer_size / sizeof(Record);
-	Record * buffer = (Record *) calloc (num_records, sizeof (Record));
+	Record * buffer = (Record *) calloc (num_records, sizeof (Record));*/
 	
-	/* open text file for reading */
+	/* open text file for reading *//*
     if (!(fp_read= fopen ( file_name , "r" ))) {
 		printf ("Could not open file \"%s\" for reading \n", file_name);
 		return (-1);
-    }
+    }*/
 	
-	/*first get the size of opening file*/
+	/*first get the size of opening file*//*
     fseek(fp_read, 0, SEEK_END);
     int file_size = ftell(fp_read);
 	int total_records = file_size / sizeof(Record);
@@ -84,4 +84,4 @@ int main(int argc, char **argv){
 	}
 	
 	return 0;
-}
+}*/

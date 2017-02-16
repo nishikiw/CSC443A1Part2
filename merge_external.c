@@ -162,19 +162,20 @@ int init_merge (MergeManager * manager, int num_trunks, char *input_prefix, int 
 	
 	manager->heap_capacity = num_trunks;
 	
-	manager->output_file_name = "records_sorted.dat";
+	strcpy(manager->output_file_name, "records_sorted.dat");
 	
-	manager->input_prefix = "sorted_list";
+	strcpy(manager->input_prefix, "sorted_list");
 	
 	return SUCCESS;
 }
 
 
 int get_number_records_in_file(MergeManager * manager, int file_number){
-	char* filename = get_file_name(manager, file_number);
-	FILE *fp;
-	fp = fopen(filename, "r");
-	if (!fp){
+	char filename[MAX_PATH_LENGTH];
+	get_file_name(filename, manager, file_number);
+	FILE *fp_read;
+	fp_read = fopen(filename, "r");
+	if (!fp_read){
 		printf ("Could not open file \"%s\" for writing \n", filename);
 		return FAILURE;
 	}
@@ -184,26 +185,23 @@ int get_number_records_in_file(MergeManager * manager, int file_number){
 	int total_records = file_size / sizeof(Record);
     fseek(fp_read, 0, SEEK_SET); 
 	
-	fclose(fp);
+	fclose(fp_read);
 	return total_records;
 }
 
 
-char* get_file_name(MergeManager * manager, int file_number){
-	char input_file_name[MAX_PATH_LENGTH];
+void get_file_name(char* input_file_name, MergeManager * manager, int file_number){
 	char file_number_str[file_number/10+2];
 	
 	strcpy(input_file_name, manager->input_prefix);
-	itoa(file_number, file_number_str, 10);
+	sprintf(file_number_str,"%d",file_number);
 	
 	strcat(input_file_name, file_number_str);
 	strcat(input_file_name, ".dat");
-	
-	return input_file_name;
 }
 
 int flush_output_buffer (MergeManager * manager) {
-	manager->outputFP = fopen ( manager->output_file_name , "wb" )
+	manager->outputFP = fopen ( manager->output_file_name , "wb" );
 	if (!manager->outputFP){
 		printf ("Could not open file \"%s\" for writing \n", manager->output_file_name);
 		return FAILURE;
@@ -237,7 +235,8 @@ int refill_buffer (MergeManager * manager, int file_number) {
 		return EMPTY;
 	}
 	
-	char* input_file_name = get_file_name(manager, file_number);
+	char input_file_name[MAX_PATH_LENGTH];
+	get_file_name(input_file_name, manager, file_number);
 	
 	manager->inputFP = fopen(input_file_name, "r");
 	if (!manager->inputFP){
@@ -257,7 +256,7 @@ int refill_buffer (MergeManager * manager, int file_number) {
 		manager->current_input_file_positions[file_number] = -1;
 	}
 	
-	int read_result = fread(manager->input_buffers[file_number], sizeof(Record), records_to_read, FILE *stream);
+	int read_result = fread(manager->input_buffers[file_number], sizeof(Record), records_to_read, manager->inputFP);
 	if (read_result <= 0){
 		printf ("Could not read file \"%s\".\n", input_file_name);
 		return FAILURE;
@@ -275,12 +274,12 @@ void clean_up (MergeManager * merger) {
 	free(merger->heap);
 	free(merger->input_file_numbers);
 	free(merger->output_buffer);
-	for (int i = 0; i < num_trunks; i++) { 
-		free(manager->input_buffers[i]);
+	for (int i = 0; i < merger->heap_capacity; i++) { 
+		free(merger->input_buffers[i]);
 	}
-	free(manager->input_buffers);
-	free(manager->current_input_file_positions);
-	free(manager->file_capacity);
+	free(merger->input_buffers);
+	free(merger->current_input_file_positions);
+	free(merger->file_capacity);
 }
 
 int compare_heap_elements (HeapElement *a, HeapElement *b) {

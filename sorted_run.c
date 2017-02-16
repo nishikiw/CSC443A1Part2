@@ -4,17 +4,17 @@
 #include <sys/timeb.h>
 #include "merge.h"
 
-
+/*
 int compare (const void *a, const void *b) {
 	Record one = *(Record*)a;
 	Record two = *(Record*)b;
 	int a_f = one.UID2;
 	int b_f = two.UID2;
 	return (a_f - b_f);
-}
+}*/
 
 
-void sort(Record * buffer, int total_records){
+//void sort(Record * buffer, int total_records){
 	/**
 	* Arguments:
 	* 1 - an array to sort
@@ -22,13 +22,13 @@ void sort(Record * buffer, int total_records){
 	* 3 - size of each array element
 	* 4 - function to compare two elements of the array
 	*/
-	qsort(buffer, total_records, sizeof(Record), compare);
-}
+//	qsort(buffer, total_records, sizeof(Record), compare);
+//}
 
 
 
 
-void phase1(char* input_file, int mem_size, int block_size){
+int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
 
 	FILE *fp_read, *fp_write;
 	int total_records;
@@ -74,8 +74,15 @@ void phase1(char* input_file, int mem_size, int block_size){
 			 //sort records in main memory
     	    sort(buffer, load_records);
     	    //write sorted list into disk
-    	    char string[25];
-    	    sprintf(string, "sorted_list%d.dat", chunck_num);
+    	    
+    	    char string[MAX_PATH_LENGTH];
+			char file_number_str[chunck_num/10+2];
+			
+			strcpy(string, output_prefix);
+			sprintf(file_number_str,"%d",chunck_num);
+			
+			strcat(string, file_number_str);
+			strcat(string, ".dat");
     	    
     	    if (!(fp_write = fopen ( string , "wb" ))) {  
     	    	printf ("Could not open file \"sorted_list\" for reading \n");
@@ -95,20 +102,8 @@ void phase1(char* input_file, int mem_size, int block_size){
 	free(buffer);
 	fclose(fp_read);
 
-
+	return chunck_num;
 }
-
-
-
-int main(int argc, char **argv) {
-
-	char *input_file = argv[1];
-	int mem_size = atoi(argv[2]);
-    int block_size = atoi(argv[3]);
-    phase1(input_file, mem_size, block_size);
-
-}
-
 
 
 
