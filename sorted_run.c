@@ -4,27 +4,6 @@
 #include <sys/timeb.h>
 #include "merge.h"
 
-/*
-int compare (const void *a, const void *b) {
-	Record one = *(Record*)a;
-	Record two = *(Record*)b;
-	int a_f = one.UID2;
-	int b_f = two.UID2;
-	return (a_f - b_f);
-}*/
-
-
-//void sort(Record * buffer, int total_records){
-	/**
-	* Arguments:
-	* 1 - an array to sort
-	* 2 - size of an array
-	* 3 - size of each array element
-	* 4 - function to compare two elements of the array
-	*/
-//	qsort(buffer, total_records, sizeof(Record), compare);
-//}
-
 
 
 
@@ -35,9 +14,6 @@ int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
     int left_records;
     int num_records_chunk;
 
-    if(block_size > mem_size){
-    	exit(0);
-    }
 
     // the number of records in one buffer read
     int num_of_blocks =  mem_size / block_size / 2;
@@ -53,7 +29,7 @@ int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
 
 	if (!(fp_read= fopen (input_file , "r" ))) {
 		printf ("Could not open file \"%s\" for reading \n", input_file);
-		exit(0);
+		exit(1);
     }
 
     /*first get the size of opening file*/
@@ -87,7 +63,7 @@ int phase1(char* input_file, int mem_size, int block_size, char* output_prefix){
     	    
     	    if (!(fp_write = fopen ( string , "wb" ))) {  
     	    	printf ("Could not open file \"sorted_list\" for writing \n");
-    	    	exit(0);
+    	    	exit(1);
     	    }
     	    fwrite (buffer, sizeof(Record), load_records, fp_write);
     	    fclose(fp_write);

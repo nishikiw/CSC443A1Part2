@@ -12,9 +12,9 @@ int main (int argc, char **argv) {
 	int mem_size = atoi(argv[2]);
     int block_size = atoi(argv[3]);
     int num_trunks = phase1(input_file, mem_size, block_size, input_prefix);
-	
+	printf("start test with memory size: %dMB  block size Byte: %d\n", mem_size/1024/1024, block_size);
 	int blocks_per_buffer = mem_size/(num_trunks+1) / block_size;
-	if (blocks_per_buffer < 0){
+	if (blocks_per_buffer < 1){
 		printf("Main memory size too small for merging.\n");
 		exit(1);
 	}
