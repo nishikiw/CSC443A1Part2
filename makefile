@@ -16,7 +16,7 @@ MAIN_SRC=main.c
 READ_RAM_SEQ_SRC=read_ram_seq.c
 DISTRIBUTION_SRC=distribution.c
 SORT_UID2_SRC=sort_uid2.c
- 
+GET_MAX_DEGREE_SRC = get_max_degree.c
 # Binaries
 all: write_blocks_seq read_ram_seq disk_sort distribution
  
@@ -27,7 +27,7 @@ read_ram_seq: $(READ_RAM_SEQ_SRC)
 	$(CC) $(CFLAGS) $^ -o $@ 
 disk_sort: $(DISK_SORT_SRC) $(SORTED_RUN_SRC) $(MERGE_EXTERNAL_SRC) $(SORT_UID2_SRC) $(MAIN_SRC)
 	$(CC) $(CFLAGS) $^ -o $@
-distribution: $(DISTRIBUTION_SRC) $(DISK_SORT_SRC) $(SORTED_RUN_SRC) $(MERGE_EXTERNAL_SRC) $(SORT_UID2_SRC)
+distribution: $(DISTRIBUTION_SRC) $(DISK_SORT_SRC) $(SORTED_RUN_SRC) $(MERGE_EXTERNAL_SRC) $(SORT_UID2_SRC) $(GET_MAX_DEGREE_SRC)
 	$(CC) $(CFLAGS) $^ -o $@ 
 
 clean:  
