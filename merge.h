@@ -46,6 +46,10 @@ typedef struct merge_manager {
 	char input_prefix [MAX_PATH_LENGTH]; //stores the prefix of a path to each run - to concatenate with run id and to read the file
 }MergeManager;
 
+
+// MAIN
+int sort_uid2(char *input_file, int mem_size, int block_size);
+
 // DISK_SORT
 int compare (const void *a, const void *b);
 void sort(Record * buffer, int total_records);

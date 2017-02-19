@@ -2,23 +2,32 @@
 
 int main(int argc, char **argv){
 	
-	FILE fp_read, fp_write;
+	FILE *fp_read, *fp_write;
 	
 	char *file_name = argv[1];
     int block_size = atoi(argv[2]);
 	int column_id = atoi(argv[3]);
 	
-	int mem_size = 200 * 1024 * 1024;
 	
-	/*
 	if (column_id == 2){
-		sort_uid2(file_name, mem_size);
+		int mem_size = 200 * 1024 * 1024;
+		if (sort_uid2(file_name, mem_size, block_size) > 0){
+			printf("ERROR IN SORTING BY UID2\n");
+			exit(1);
+		}
 		file_name = "records_sorted.dat";
-	}*/
+	}
 	
 	long max_degree = get_max_degree(file_name, block_size);
 	
 	long counts[max_degree];
+	
+	// Init counts;
+	for (int i = 0; i < max_degree; i++){
+		counts[i] = 0;
+	}
+	
+	int records_per_block = block_size/sizeof(Record);
 	
 	/* allocate buffer for 1 block */
     Record* buffer = (Record *) calloc (records_per_block, sizeof(Record)) ;
@@ -49,20 +58,37 @@ int main(int argc, char **argv){
 			length = unread_records;
 		}
 		/*compute the query*/
+		int current_id = 0;
+		int current_num = 0;
+		
 		int i;
 		for (i = 0; i < length; i++){
-			if(buffer[i].uid1 == current_id){
-				current_num += 1;
+			if (column_id == 1){
+				if(buffer[i].UID1 == current_id){
+					current_num += 1;
+				}
+				else{
+					counts[current_num-1] += 1;
+					
+					/*initialization */
+					current_num = 1;
+					current_id = buffer[i].UID1;
+				}
 			}
 			else{
-				counts[current_num] += 1;
-				
-				/*initialization */
-				current_num = 1;
-				current_id = buffer[i].uid1;
+				if(buffer[i].UID2 == current_id){
+					current_num += 1;
+				}
+				else{
+					counts[current_num-1] += 1;
+					
+					/*initialization */
+					current_num = 1;
+					current_id = buffer[i].UID2;
+				}
 			}
 		}
-		counts[current_num] += 1;
+		counts[current_num-1] += 1;
 	}
 	
 	fclose(fp_read);
@@ -83,7 +109,7 @@ int main(int argc, char **argv){
 	}
 	
 	for (long i = 0; i < max_degree; i++){
-		fprintf(fp_write, "%d %d\n", i, counts[i]);
+		fprintf(fp_write, "%ld %ld\n", i+1, counts[i]);
 	}
 	
 	fclose(fp_write);
