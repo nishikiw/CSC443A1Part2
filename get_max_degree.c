@@ -89,6 +89,7 @@ long get_max_degree(char* file_name, int blocksize, int column_id){
 		}
 
     }
+    printf("max degree: %ld\n", max_num);
 
     fclose (fp_read);
     free (buffer);
