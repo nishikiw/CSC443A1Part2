@@ -18,7 +18,7 @@ int main(int argc, char **argv){
 		file_name = "records_sorted.dat";
 	}
 	
-	long max_degree = get_max_degree(file_name, block_size);
+	long max_degree = get_max_degree(file_name, block_size, column_id);
 	
 	long counts[max_degree];
 	
