@@ -42,6 +42,10 @@ int main(int argc, char **argv){
     fseek(fp_read, 0, SEEK_SET); 
     int total_following = file_size / sizeof(Record);
     int unread_records = total_following;
+	
+	/*compute the query*/
+	int current_id = 0;
+	int current_num = 0;
    
     /* read records into buffer */
     while (fread (buffer, sizeof(Record), records_per_block, fp_read) > 0){
@@ -57,9 +61,6 @@ int main(int argc, char **argv){
 		else{
 			length = unread_records;
 		}
-		/*compute the query*/
-		int current_id = 0;
-		int current_num = 0;
 		
 		int i;
 		for (i = 0; i < length; i++){
@@ -88,8 +89,9 @@ int main(int argc, char **argv){
 				}
 			}
 		}
-		counts[current_num-1] += 1;
 	}
+	
+	counts[current_num-1] += 1;
 	
 	fclose(fp_read);
 	free (buffer);

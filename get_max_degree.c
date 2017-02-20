@@ -8,7 +8,6 @@ long get_max_degree(char* file_name, int blocksize, int column_id){
 	int block_size = blocksize;
     int records_per_block = block_size / sizeof(Record);
     FILE *fp_read;
-    long most_follow_id;
     long max_num = 0;
     long current_id = 0;
     long current_num = 0;
@@ -51,7 +50,6 @@ long get_max_degree(char* file_name, int blocksize, int column_id){
 		        else{
 		        	unique_uids++;
 		        	if (current_num > max_num){
-		        		most_follow_id = current_id;
 		        		max_num = current_num;
 		        	}
 		        	/*initialization */
@@ -60,7 +58,6 @@ long get_max_degree(char* file_name, int blocksize, int column_id){
 		        }
 		    }
 		    if (current_num > max_num){
-		    	most_follow_id = current_id;
 		    	max_num = current_num;
 		    }
 		}
@@ -73,7 +70,6 @@ long get_max_degree(char* file_name, int blocksize, int column_id){
 		        else{
 		        	unique_uids++;
 		        	if (current_num > max_num){
-		        		most_follow_id = current_id;
 		        		max_num = current_num;
 		        	}
 		        	/*initialization */
@@ -82,7 +78,6 @@ long get_max_degree(char* file_name, int blocksize, int column_id){
 		        }
 		    }
 		    if (current_num > max_num){
-		    	most_follow_id = current_id;
 		    	max_num = current_num;
 		    }
 
