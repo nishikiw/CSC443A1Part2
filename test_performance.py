@@ -8,27 +8,31 @@ sizes = [
     1,
     1/2,
     1/4,
+    1/8,
     1/16,
+    1/32,
+    1/64,
+    1/128,
     1/256,
     1/65536
 ]
 
 mem_size = 200*MB
 
-filename = "records.dat"
-block_size = 10240
+count =0;
+block_size = 2*MB
 
 
 f1 = open("performance_disk_sort.txt", "w")
 
 for size in sizes:
-    subprocess.run(["/usr/bin/time -v disk_sort", filename, str(mem_size*size), str(block_size)], stdout=f1)
-f1.close()
+    filename = "records"+str(count)+".dat"
+    subprocess.run(["/usr/bin/time", "-v", "disk_sort", filename, str(mem_size*size), str(block_size)], stdout=f1)
+    count = count + 1;
+    print("\n\n")
 
 
-f2 = open("performance_unit_sort"+str(iteration)+".txt", "w")
-subprocess.run(["sort -t"," -n -k2 edges.csv > edges_sorted_uid2.csv"], stdout=f2)
-f2.close()
+
 
 
 

@@ -46,6 +46,10 @@ typedef struct merge_manager {
 	char input_prefix [MAX_PATH_LENGTH]; //stores the prefix of a path to each run - to concatenate with run id and to read the file
 }MergeManager;
 
+
+// MAIN
+int sort_uid2(char *input_file, int mem_size, int block_size);
+
 // DISK_SORT
 int compare (const void *a, const void *b);
 void sort(Record * buffer, int total_records);
@@ -59,6 +63,7 @@ int get_number_records_in_file(MergeManager * manager, int file_number);
 void get_file_name(char* input_file_name, MergeManager * manager, int file_number);
 void print_buffers(MergeManager * manager);
 void print_heap(MergeManager * manager);
+long get_max_degree(char* file_name, int block_size, int column_id);
 
 //1. main loop
 int merge_runs (MergeManager * manager, int num_trunks, char *input_prefix, int buffer_capacity); 
