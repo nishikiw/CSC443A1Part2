@@ -24,6 +24,7 @@ start test with memory size: 200MB  block size Byte: 2097152
         Exit status: 0
 
 
+
 start test with memory size: 100MB  block size Byte: 2097152
   Command being timed: "disk_sort records1.dat 104857600.0 2097152"
         User time (seconds): 11.29
@@ -48,6 +49,7 @@ start test with memory size: 100MB  block size Byte: 2097152
         Signals delivered: 0
         Page size (bytes): 4096
         Exit status: 0
+
 
 
 start test with memory size: 50MB  block size Byte: 2097152
@@ -79,6 +81,7 @@ Command exited with non-zero status 1
 
 
 
+
 start test with memory size: 25MB  block size Byte: 2097152
 Main memory size too small for merging.
 Command exited with non-zero status 1
@@ -105,6 +108,7 @@ Command exited with non-zero status 1
         Signals delivered: 0
         Page size (bytes): 4096
         Exit status: 1
+
 
 
 start test with memory size: 12MB  block size Byte: 2097152
@@ -135,6 +139,7 @@ Command exited with non-zero status 1
         Exit status: 1
 
 
+
 start test with memory size: 6MB  block size Byte: 2097152
 Main memory size too small for merging.
 Command exited with non-zero status 1
@@ -161,6 +166,7 @@ Command exited with non-zero status 1
         Signals delivered: 0
         Page size (bytes): 4096
         Exit status: 1
+
 
 
 
